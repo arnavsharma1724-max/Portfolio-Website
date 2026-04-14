@@ -84,38 +84,29 @@ function setupContactCopy() {
   const form = document.querySelector("#contact-form");
   if (!form) return;
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     const name = String(fd.get("name") || "").trim();
     const email = String(fd.get("email") || "").trim();
     const message = String(fd.get("message") || "").trim();
 
-    const text = [
-      `Hi Arnav,`,
-      ``,
-      `My name: ${name}`,
-      `My email: ${email}`,
-      ``,
-      message,
-      ``,
-      `— Sent from your portfolio site`
-    ].join("\n");
+    const subject = encodeURIComponent(`Message from ${name} via Portfolio`);
+    const body = encodeURIComponent(
+      `Hi Arnav,\n\nMy name: ${name}\nMy email: ${email}\n\n${message}\n\n— Sent from your portfolio site`
+    );
 
     const button = form.querySelector('button[type="submit"]');
     const oldLabel = button ? button.textContent : "";
 
-    try {
-      await navigator.clipboard.writeText(text);
-      if (button) button.textContent = "Copied!";
-      setTimeout(() => {
-        if (button) button.textContent = oldLabel || "Copy message to clipboard";
-      }, 1200);
-    } catch {
-      if (button) button.textContent = "Copy failed (select + copy)";
-      const textarea = form.querySelector('textarea[name="message"]');
-      if (textarea) textarea.focus();
-    }
+    window.location.href = `mailto:arnavsharma.1724@gmail.com?subject=${subject}&body=${body}`;
+
+    if (button) button.textContent = "Opening email client...";
+    setTimeout(() => {
+      if (button) button.textContent = oldLabel || "Send Message";
+    }, 2000);
+
+    form.reset();
   });
 }
 
